@@ -88,4 +88,55 @@ public class SpreadsheetTests {
         sheet.put(theCell, "=7"); // Foreshadowing formulas:)
         assertEquals("=7", sheet.getLiteral(theCell));
     }
+
+    @Test
+    public void testFormulaSpec() {
+        Sheet sheet = new Sheet();
+        sheet.put("B1", " =7"); // note leading space
+        assertEquals("Not a formula", " =7", sheet.get("B1"));
+        assertEquals("Unchanged", " =7", sheet.getLiteral("B1"));
+    }
+
+    @Test
+    public void testConstantFormula() {
+        Sheet sheet = new Sheet();
+        sheet.put("A1", "=7");
+        assertEquals("Formula", "=7", sheet.getLiteral("A1"));
+        assertEquals("Value", "7", sheet.get("A1"));
+    }
+
+    @Test
+    public void testParentheses() {
+        Sheet sheet = new Sheet();
+        sheet.put("A1", "=(7)");
+        assertEquals("Parens", "7", sheet.get("A1"));
+    }
+
+    @Test
+    public void testParenthesesOnAString() throws Exception {
+        Sheet sheet = new Sheet();
+        sheet.put("A1", "((oh hai))");
+        assertEquals("((oh hai))", sheet.get("A1"));
+    }
+
+    @Test
+    public void testUnequalNumberOfParentheses() throws Exception {
+        Sheet sheet = new Sheet();
+        sheet.put("A1", "=((7)");
+        assertEquals("#ERROR", sheet.get("A1"));
+    }
+
+    @Test
+    public void testDeepParentheses() {
+        Sheet sheet = new Sheet();
+        sheet.put("A1", "=((((10))))");
+        assertEquals("Parens", "10", sheet.get("A1"));
+    }
+
+    @Test
+    public void testMultiply() {
+        Sheet sheet = new Sheet();
+        sheet.put("A1", "=2*3*4");
+        assertEquals("Times", "24", sheet.get("A1"));
+    }
 }

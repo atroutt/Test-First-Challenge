@@ -11,8 +11,28 @@ public class Sheet {
 
         value = trimIfInteger(value);
 
+        value = trimLeadingEquals(value);
+
+        value = trimSurroundingParentheses(value);
+
         return value;
     }
+
+    private String trimSurroundingParentheses(String value) {
+        while(value.startsWith("("))
+            value = value.substring(1);
+        while(value.endsWith(")"))
+            value = value.substring(0, value.length() - 1);
+
+        return value;
+    }
+
+    private String trimLeadingEquals(String value) {
+        if ( value.startsWith("="))
+            value = value.substring(1);
+        return value;
+    }
+
 
     private String trimIfInteger(String value) {
         try {
